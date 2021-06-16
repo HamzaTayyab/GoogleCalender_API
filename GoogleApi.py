@@ -162,7 +162,7 @@ def free_slots_1(onset, dur, service, auth, auth_img):
     return ([{'Start': DET2}, {'End': DEET2}, {'AuthorName': auth}, {'ImageLink': auth_img}, {'Fee': Fee}]);
 
 # STARTING API2 PART
-def schedule_event(Start,End, Author,Subject_name,Student_email):
+def schedule_event(Start,End, Author,auth_img,fee,Subject_name,Student_email):
     event = {
       'summary': Subject_name + ' Class',
       'location': 'Google hangout',
@@ -194,8 +194,9 @@ def schedule_event(Start,End, Author,Subject_name,Student_email):
       },
     }
     # print (event)
-    service = build("calendar", "v3", credentials=Author_dict[Author])
+    service = build("calendar", "v3", credentials=Author_dict[Author][0])
     event = service.events().insert(calendarId='primary',conferenceDataVersion=1, body=event).execute()
     Meeting_link = event.get('hangoutLink')
 
-    return (Meeting_link, Start, End,Author);
+    return ([{'Link':Meeting_link}, {'Start':Start}, {'End':End},
+             {'Author':Author},{'ImageLink':auth_img},{'Fee':fee}]);
