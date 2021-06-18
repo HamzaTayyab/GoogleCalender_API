@@ -12,13 +12,13 @@ credentials3 = pickle.load(open("andrew_token.pkl", "rb"))
 
 #Dictionary for Subjects and their relevant teachers
 subject_dict = {'Calculations':['Zachary Piracha','Marc Berman'],
-                'Clinical':['Zachary Piracha','Andrew Piracha'],
-                'Concept Prep':['Zachary Piracha','Andrew Piracha'],
+                'Clinical Pharmacy':['Zachary Piracha','Andrew Piracha'],
+                'Pharmacy Law':['Zachary Piracha','Andrew Piracha'],
                 'Compounding Exam': ['Zachary Piracha','Andrew Piracha'],
                 'General Pharmacology': ['Zachary Piracha','Andrew Piracha']}
 #Dictionary for Authors and their access tokens
 Author_dict = {'Zachary Piracha':[credentials1,"https://i.ibb.co/3BcnXzh/Image-from-i-OS-1.jpg"],
-               'Marc Berman':[credentials2,"https://i.ibb.co/rvTJ9x5/Image-from-i-OS.jpg"],
+               'Marc Berman':[credentials2,"https://i.ibb.co/hZMxW4J/20210617-154244.jpg"],
                'Andrew Piracha':[credentials3,"https://i.ibb.co/FbGGhys/PXL-20210516-233842665-PORTRAIT.jpg"]
               }
 
@@ -37,7 +37,7 @@ def API_1(name,Email,subj,onset,dur):
                         service = build("calendar", "v3", credentials=Author_dict[auth][0])
                         auth_img = Author_dict[auth][1]
                         free_slot.insert(index,free_slots_1(Onset,Event_duration,service,auth,auth_img))
-    return ([{'Author_details':free_slot},{'Subject':Subject},{'Email':Student_email}])
+    return ({'Author_details':free_slot},{'Subject':Subject},{'Email':Student_email})
 
 
 def busy_schedule_1(Min, Max, service):
@@ -81,9 +81,9 @@ def time_Min_Max(days):
 # THIS FUNCTION IS USED TO RETURN THE FEE FOR EACH SESSION
 def sub_fee(dur):
     if (dur == 1):
-        Fee = 40
+        Fee = 50
     else:
-        Fee = 80
+        Fee = 100
     return (Fee)
 
 
@@ -159,7 +159,7 @@ def free_slots_1(onset, dur, service, auth, auth_img):
         DET2 = DET2.strftime('%Y-%m-%dT%H:%M:%S') + '-0400'
         DEET2 = DEET2.strftime('%Y-%m-%dT%H:%M:%S') + '-0400'
 
-    return ([{'Start': DET2}, {'End': DEET2}, {'AuthorName': auth}, {'ImageLink': auth_img}, {'Fee': Fee}]);
+    return ({'Start': DET2}, {'End': DEET2}, {'AuthorName': auth}, {'ImageLink': auth_img}, {'Fee': Fee});
 
 # STARTING API2 PART
 def schedule_event(Start,End, Author,auth_img,fee,Subject_name,Student_email):
@@ -198,5 +198,5 @@ def schedule_event(Start,End, Author,auth_img,fee,Subject_name,Student_email):
     event = service.events().insert(calendarId='primary',conferenceDataVersion=1, body=event).execute()
     Meeting_link = event.get('hangoutLink')
 
-    return ([{'Link':Meeting_link}, {'Start':Start}, {'End':End},
-             {'Author':Author},{'ImageLink':auth_img},{'Fee':fee}]);
+    return ({'Link':Meeting_link}, {'Start':Start}, {'End':End},
+             {'Author':Author},{'ImageLink':auth_img},{'Fee':fee});
