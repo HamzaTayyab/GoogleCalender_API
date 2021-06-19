@@ -10,11 +10,17 @@ credentials1 = pickle.load(open("zach_token.pkl", "rb"))
 credentials2 = pickle.load(open("marc_token.pkl", "rb"))
 credentials3 = pickle.load(open("andrew_token.pkl", "rb"))
 
-# Dictionary for Subjects and their relevant teachers
-subject_dict = {'Calculations':['Zach','Marc'],'Clinical':['Zach','Andrew'],'Concept Prep':['Zach','Andrew'],
-                'Compounding Exam': ['Zach','Andrew'],'General Pharmacology': ['Zach','Andrew']}
-# Dictionary for Authors and their access tokens
-Author_dict = {'Zach':credentials1,'Marc':credentials2,'Andrew':credentials3}
+#Dictionary for Subjects and their relevant teachers
+subject_dict = {'Calculations':['Zachary Piracha','Marc Berman'],
+                'Clinical Pharmacy':['Zachary Piracha','Andrew Piracha'],
+                'Pharmacy Law':['Zachary Piracha','Andrew Piracha'],
+                'Compounding Exam': ['Zachary Piracha','Andrew Piracha'],
+                'General Pharmacology': ['Zachary Piracha','Andrew Piracha']}
+#Dictionary for Authors and their access tokens
+Author_dict = {'Zachary Piracha':[credentials1,"https://i.ibb.co/3BcnXzh/Image-from-i-OS-1.jpg"],
+               'Marc Berman':[credentials2,"https://i.ibb.co/hZMxW4J/20210617-154244.jpg"],
+               'Andrew Piracha':[credentials3,"https://i.ibb.co/FbGGhys/PXL-20210516-233842665-PORTRAIT.jpg"]
+              }
 
 def API_1(name,Email,subj,onset,dur):
     Student_name = name
@@ -22,15 +28,17 @@ def API_1(name,Email,subj,onset,dur):
     Subject = subj
     Onset = onset
     Event_duration = dur
-    free_slot = list()
+    free_slot = []
     for key in subject_dict:
         if (key==subj):
             for obj in subject_dict[key]:
                 for index,auth in enumerate(Author_dict):
                     if (obj==auth):
-                        service = build("calendar", "v3", credentials=Author_dict[auth])
-                        free_slot.insert(index,free_slots_1(Onset,Event_duration,service,auth))
-    return (free_slot,Subject,Student_email)
+                        service = build("calendar", "v3", credentials=Author_dict[auth][0])
+                        auth_img = Author_dict[auth][1]
+                        free_slot.insert(index,free_slots_1(Onset,Event_duration,service,auth,auth_img))
+    return ({'Author_details':free_slot},{'Subject':Subject},{'Email':Student_email})
+
 
 def busy_schedule_1(Min, Max, service):
     # Getting the scheduled events from the calendar
@@ -38,7 +46,7 @@ def busy_schedule_1(Min, Max, service):
                                           timeMin=Min, timeMax=Max, timeZone='US/Eastern', singleEvents="TRUE",
                                           orderBy="startTime").execute()
     # Creating a list to save start, endtime and date for all events
-    Busy_schedule = list()
+    Busy_schedule = []
     # Getting the start and End time element off all the events from calendars
     for index, obj in enumerate(calendar_list['items']):
         Start = obj['start']['dateTime']
@@ -73,9 +81,9 @@ def time_Min_Max(days):
 # THIS FUNCTION IS USED TO RETURN THE FEE FOR EACH SESSION
 def sub_fee(dur):
     if (dur == 1):
-        Fee = 40
+        Fee = 50
     else:
-        Fee = 80
+        Fee = 100
     return (Fee)
 
 
@@ -87,22 +95,20 @@ def sub_fee(dur):
 # EET: EVENT END TIME
 ###############################
 # THIS FUNCTION WILL RETURN THE FREE SLOTS FROM THE CALENDER
-def free_slots_1(onset, dur, service, auth):
+def free_slots_1(onset, dur, service, auth, auth_img):
     Onset = onset
     Event_duration = dur
     Fee = sub_fee(dur)
 
     # Extracting Free time to schedule an event
-    tobe_scheduled = list()
     DET2 = datetime.now(pytz.timezone('US/Eastern'))
     DET2 = ceil_dt(DET2.replace(tzinfo=None), timedelta(minutes=60))
 
     DEET2 = (DET2 + timedelta(hours=Event_duration))
     DEET2 = ceil_dt(DEET2.replace(tzinfo=None), timedelta(minutes=60))
-    eventEnd_time = DEET2.strftime("%H")
 
     # Getting the busy schedule w.r.t onset value. Onset=1 means within 1 day & Onset=2 means within a week
-    schedule = list()
+    schedule = []
     if (Onset == 1):
         time = time_Min_Max(1)
         schedule = busy_schedule_1(time[0], time[1], service)
@@ -125,14 +131,12 @@ def free_slots_1(onset, dur, service, auth):
 
         # print((DET2.date()-start_date).days,start_date,DET2.date())
         if (DET2.hour < ET2.hour):
-            # print(1,DET2.hour,DEET2.hour,ET2.hour,EET2.hour,DET2)
             if (DEET2.hour <= ET2.hour):
                 break
             else:
                 DET2 = EET2
                 DEET2 = DET2 + timedelta(hours=Event_duration)
         elif (DET2.hour > ET2.hour):
-            # print(2,DET2.hour,DEET2.hour,ET2.hour,EET2.hour,DET2)
             if (DEET2.hour > EET2.hour):
                 break
             else:
@@ -140,7 +144,6 @@ def free_slots_1(onset, dur, service, auth):
                 DEET2 = DET2 + timedelta(hours=Event_duration)
                 # print(DET,DEET)
         elif (DET2.hour == ET2.hour):
-            # print(3,DET2.hour,DEET2.hour,ET2.hour,EET2.hour,DET2)
             DET2 = EET2
             DEET2 = DET2 + timedelta(hours=Event_duration)
 
@@ -156,10 +159,10 @@ def free_slots_1(onset, dur, service, auth):
         DET2 = DET2.strftime('%Y-%m-%dT%H:%M:%S') + '-0400'
         DEET2 = DEET2.strftime('%Y-%m-%dT%H:%M:%S') + '-0400'
 
-    return DET2, DEET2, auth, Fee;
+    return ({'Start': DET2}, {'End': DEET2}, {'AuthorName': auth}, {'ImageLink': auth_img}, {'Fee': Fee});
 
 # STARTING API2 PART
-def schedule_event(Start,End, Author,Subject_name,Student_email):
+def schedule_event(Start,End, Author,auth_img,fee,Subject_name,Student_email):
     event = {
       'summary': Subject_name + ' Class',
       'location': 'Google hangout',
@@ -191,8 +194,9 @@ def schedule_event(Start,End, Author,Subject_name,Student_email):
       },
     }
     # print (event)
-    service = build("calendar", "v3", credentials=Author_dict[Author])
+    service = build("calendar", "v3", credentials=Author_dict[Author][0])
     event = service.events().insert(calendarId='primary',conferenceDataVersion=1, body=event).execute()
     Meeting_link = event.get('hangoutLink')
 
-    return (Meeting_link, Start, End,Author);
+    return ({'Link':Meeting_link}, {'Start':Start}, {'End':End},
+             {'Author':Author},{'ImageLink':auth_img},{'Fee':fee});

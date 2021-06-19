@@ -43,10 +43,12 @@ def API1():
 # JSON FORMAT FOR CALLING API-2
 # {
 #     "subject": "Calculations",
-#     "author": "Zach",
+#     "author": "Zachary Piracha",
 #     "email": "tobe@gmail.com",
-#     "start": 1,
-#     "end": 1
+#     "start": "2021-06-15T19:00:00-0400",
+#     "end": "2021-06-15T20:00:00-0400",
+#     "fee" : 40,
+#     "imgLink" : "https://i.ibb.co/rvTJ9x5/Image-from-i-OS.jpg"
 # }
 @app.route('/API-2',methods=["POST"])
 def API2():
@@ -57,7 +59,9 @@ def API2():
         Subject = data["subject"]
         Author = data["author"]
         Email = data["email"]
-        res = schedule_event(Start,End,Author,Subject,Email)
+        Auth_imgLink = data["imgLink"]
+        Fee = data["fee"]
+        res = schedule_event(Start,End,Author,Auth_imgLink,Fee,Subject,Email)
         return jsonify(res)
     except:
         return "Bad Request!"
