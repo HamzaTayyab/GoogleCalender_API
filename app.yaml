@@ -16,7 +16,7 @@ runtime: python
 api_version: 1.01
 env: flex
 entrypoint: gunicorn -b :$PORT main:app
-name: jakstatstutors
+service: jakstatstutors
 
 runtime_config:
   python_version: 3.7
