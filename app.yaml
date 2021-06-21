@@ -13,10 +13,9 @@
 # limitations under the License.
 
 runtime: python
-api_version: 1.01
+api_version: 1
 env: flex
 entrypoint: gunicorn -b :$PORT main:app
-service: jakstatstutors
 
 runtime_config:
   python_version: 3.7
