@@ -19,7 +19,7 @@ subject_dict = {'Calculations':['Zachary Piracha','Marc Berman'],
 #Dictionary for Authors and their access tokens
 Author_dict = {'Zachary Piracha':[credentials1,"https://i.ibb.co/3BcnXzh/Image-from-i-OS-1.jpg"],
                'Marc Berman':[credentials2,"https://i.ibb.co/hZMxW4J/20210617-154244.jpg"],
-               'Andrew Piracha':[credentials3,"https://i.ibb.co/FbGGhys/PXL-20210516-233842665-PORTRAIT.jpg"]
+               'Andrew Piracha':[credentials3,"https://i.ibb.co/rvTJ9x5/Image-from-i-OS.jpg"]
               }
 
 def API_1(name,Email,subj,onset,dur):
