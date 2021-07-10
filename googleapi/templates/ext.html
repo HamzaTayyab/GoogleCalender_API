@@ -1,0 +1,12 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+    {{block.super}}
+    <div style = "text-align : center; margin-top: 15%">
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %} {{form.as_p}}
+      <input type="submit" value="submit" />
+      {{cre}}
+      {% comment %} <meta http-equiv="refresh" content="5; URL={{cre}}" /> {% endcomment %}
+    </form>
+  </div>
+{% endblock %}
