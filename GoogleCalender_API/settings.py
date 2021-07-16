@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-9-mwd8uesdh1mt&p5i%q87)1880m5dr86t*6$10ps8i4g@b#jz
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['https://jackstat-tutors.herokuapp.com/',
+ALLOWED_HOSTS = ['https://jakstatsolutions.herokuapp.com/',
                  '127.0.0.1', 'localhost']
 
 
